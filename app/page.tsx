@@ -1,4 +1,6 @@
-const bookingUrl = "https://www.opentable.co.uk/booking/restref/availability?lang=en-GB&restRef=193299&otSource=Restaurant%20website";
+import { OpenTableBooking } from "./OpenTableBooking";
+
+const bookingUrl = "#book";
 
 const menuHighlights = [
   { name: "Yaz Mixed Grill", detail: "Charcoal-grilled lamb, chicken, adana, rice and house salad" },
@@ -47,7 +49,7 @@ export default function Home() {
         <nav aria-label="Main navigation">
           <a href="#story">Our story</a><a href="#menu">Menu</a><a href="#private-hire">Private hire</a><a href="#visit">Visit</a>
         </nav>
-        <a className="header-book" href={bookingUrl} target="_blank" rel="noreferrer">Book a table</a>
+        <a className="header-book" href={bookingUrl}>Book a table</a>
       </header>
 
       <section className="hero" id="top">
@@ -56,7 +58,7 @@ export default function Home() {
           <h1>Mediterranean soul.<br/><em>London energy.</em></h1>
           <p className="intro">Modern Turkish and Mediterranean dining, made for long lunches, candlelit dinners and celebrations that deserve something special.</p>
           <div className="hero-actions">
-            <a className="button button-gold" href={bookingUrl} target="_blank" rel="noreferrer">Book a table</a>
+            <a className="button button-gold pulse-button" href={bookingUrl}>Book a table</a>
             <a className="button button-quiet" href="#menu">Explore the menu <span aria-hidden="true">→</span></a>
           </div>
           <div className="opening-note"><span>Open every day</span><span>Sun–Thu 10:30–23:00</span><span>Fri–Sat 10:30–00:00</span></div>
@@ -66,7 +68,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="marquee" aria-label="Yaz restaurant highlights"><span>Turkish flavours</span><i>•</i><span>Modern hospitality</span><i>•</i><span>Made to share</span><i>•</i><span>Highams Park</span></section>
+      <section className="marquee" aria-label="Yaz restaurant highlights"><div><span>Turkish flavours</span><i>•</i><span>Modern hospitality</span><i>•</i><span>Made to share</span><i>•</i><span>Highams Park</span><i>•</i><span>Turkish flavours</span><i>•</i><span>Modern hospitality</span><i>•</i><span>Made to share</span><i>•</i><span>Highams Park</span></div></section>
+
+      <OpenTableBooking />
 
       <section className="story section" id="story">
         <div><p className="eyebrow dark">Family-run · Generously served</p><h2>A little piece of the Mediterranean, right here in London.</h2></div>
@@ -95,7 +99,7 @@ export default function Home() {
       </section>
 
       <footer><a className="brand footer-brand" href="#top"><span>Y</span>AZ</a><p>Turkish &amp; Mediterranean dining in Highams Park.</p><div><a href="https://www.instagram.com/yazrestaurant/">Instagram</a><a href="https://www.tiktok.com/@yazrestaurant_uk">TikTok</a><a href="https://www.tripadvisor.co.uk/Restaurant_Review-g10283565-d15636700-Reviews-Yaz_Restaurant-Chingford_Waltham_Forest_Greater_London_England.html">Tripadvisor</a></div><small>© {new Date().getFullYear()} Yaz Restaurant</small></footer>
-      <a className="mobile-book" href={bookingUrl} target="_blank" rel="noreferrer">Book a table</a>
+      <a className="mobile-book" href={bookingUrl}>Book a table</a>
     </main>
   );
 }
