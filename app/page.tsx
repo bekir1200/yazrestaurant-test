@@ -1,105 +1,42 @@
+import { asc } from "drizzle-orm";
+import { getDb } from "../db";
+import { siteRecords } from "../db/schema";
+import { CrmLeadForm } from "./CrmLeadForm";
 import { OpenTableBooking } from "./OpenTableBooking";
+import { MobileBookingButton } from "./MobileBookingButton";
 
-const bookingUrl = "#book";
+const heroImage="https://static.wixstatic.com/media/16ca1a_b5c3a872574b4054af44f6fab16435a8f000.jpg/v1/fill/w_1800,h_1800,al_c,q_90,enc_avif,quality_auto/16ca1a_b5c3a872574b4054af44f6fab16435a8f000.jpg";
+const foodImage="https://static.wixstatic.com/media/16ca1a_a7a5fe1e979f40efb026481393cddd56f000.jpg/v1/fill/w_1600,h_1600,al_c,q_90,enc_avif,quality_auto/16ca1a_a7a5fe1e979f40efb026481393cddd56f000.jpg";
+const fallbackMenu=[{name:"Yaz Mixed Grill",detail:"Lamb, chicken and adana from the charcoal fire",price:""},{name:"Mediterranean Sea Bass",detail:"Lemon, herbs, seasonal greens and olive oil",price:""},{name:"Anatolian Meze",detail:"Vibrant dips, warm bread and plates made to share",price:""}];
+const restaurantSchema={"@context":"https://schema.org","@type":"Restaurant",name:"Yaz Restaurant",image:[heroImage,foodImage],url:"https://www.yazrestaurant.co.uk/",telephone:"+44 20 8279 9239",priceRange:"££–£££",servesCuisine:["Turkish","Mediterranean","Middle Eastern"],acceptsReservations:true,menu:"https://www.yazrestaurant.co.uk/menu",hasMap:"https://maps.google.com/?q=Yaz+Restaurant+Highams+Park",areaServed:["Highams Park","Chingford","Waltham Forest","East London"],address:{"@type":"PostalAddress",streetAddress:"7–9 Signal Walk, Highams Park",addressLocality:"London",postalCode:"E4 9BW",addressCountry:"GB"},openingHoursSpecification:[{"@type":"OpeningHoursSpecification",dayOfWeek:["Monday","Tuesday","Wednesday","Thursday","Sunday"],opens:"10:30",closes:"23:00"},{"@type":"OpeningHoursSpecification",dayOfWeek:["Friday","Saturday"],opens:"10:30",closes:"00:00"}],sameAs:["https://www.instagram.com/yazrestaurant/","https://www.tiktok.com/@yazrestaurant_uk","https://www.tripadvisor.co.uk/Restaurant_Review-g10283565-d15636700-Reviews-Yaz_Restaurant-Chingford_Waltham_Forest_Greater_London_England.html"]};
 
-const menuHighlights = [
-  { name: "Yaz Mixed Grill", detail: "Charcoal-grilled lamb, chicken, adana, rice and house salad" },
-  { name: "Mediterranean Sea Bass", detail: "Herbs, lemon, seasonal greens and olive oil" },
-  { name: "Anatolian Meze", detail: "A generous table of vibrant dips, warm bread and shared plates" },
-];
+export const dynamic="force-dynamic";
+export default async function Home(){
+ let menu=fallbackMenu,events:{title:string;date:string;detail:string}[]=[];let headline="A table full of stories.";let intro="Contemporary Turkish and Mediterranean cooking, generous hospitality and evenings that move at their own pace.";
+ try{const rows=await getDb().select().from(siteRecords).orderBy(asc(siteRecords.position));const live=rows.filter(r=>r.type==="menu"&&r.active).map(r=>({name:r.title,detail:r.body,price:r.subtitle}));if(live.length)menu=live.slice(0,3);events=rows.filter(r=>r.type==="event"&&r.active).map(r=>({title:r.title,date:r.subtitle,detail:r.body}));const hero=rows.find(r=>r.type==="content"&&r.title==="homepage.hero"&&r.active);if(hero?.subtitle)headline=hero.subtitle;if(hero?.body)intro=hero.body;}catch{}
+ return <main className="yaz-home">
+  <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(restaurantSchema)}}/>
+  <header className="yaz-nav"><a className="yaz-wordmark" href="#top" aria-label="Yaz Restaurant home"><span>Y</span>AZ<small>HIGHAMS PARK</small></a><nav aria-label="Main navigation"><a href="#story">Story</a><a href="/menu">Menus</a><a href="/private-hire">Private hire</a><a href="#visit">Find us</a></nav><a className="yaz-nav-book" href="#book">Reserve</a></header>
 
-const restaurantSchema = {
-  "@context": "https://schema.org",
-  "@type": "Restaurant",
-  name: "Yaz Restaurant",
-  image: [
-    "https://static.wixstatic.com/media/16ca1a_b5c3a872574b4054af44f6fab16435a8f000.jpg",
-    "https://static.wixstatic.com/media/16ca1a_a7a5fe1e979f40efb026481393cddd56f000.jpg",
-  ],
-  url: "https://www.yazrestaurant.co.uk/",
-  telephone: "+44 20 8279 9239",
-  priceRange: "££–£££",
-  servesCuisine: ["Turkish", "Mediterranean", "Middle Eastern"],
-  acceptsReservations: true,
-  menu: "https://www.yazrestaurant.co.uk/menu",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "7–9 Signal Walk, Highams Park",
-    addressLocality: "London",
-    postalCode: "E4 9BW",
-    addressCountry: "GB",
-  },
-  openingHoursSpecification: [
-    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Sunday"], opens: "10:30", closes: "23:00" },
-    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Friday", "Saturday"], opens: "10:30", closes: "00:00" },
-  ],
-  sameAs: [
-    "https://www.instagram.com/yazrestaurant/",
-    "https://www.tiktok.com/@yazrestaurant_uk",
-    "https://www.tripadvisor.co.uk/Restaurant_Review-g10283565-d15636700-Reviews-Yaz_Restaurant-Chingford_Waltham_Forest_Greater_London_England.html",
-  ],
-};
+  <section className="yaz-hero" id="top"><div className="yaz-hero-media"><img src={heroImage} alt="Atmospheric dining room at Yaz Restaurant in Highams Park" width="1800" height="1800" fetchPriority="high"/><video autoPlay muted loop playsInline preload="metadata" poster={heroImage} aria-hidden="true"><source src="/yaz-hero.mp4" type="video/mp4"/></video><div className="yaz-hero-wash"/></div><div className="yaz-hero-copy"><p className="yaz-kicker"><span>Highams Park</span><span>London E4</span></p><h1>{headline}</h1><p>{intro}</p><div className="yaz-hero-actions"><a href="#book">Book your table</a><a href="/menu">Explore the menu</a></div></div><div className="yaz-scroll">Scroll to discover <i>↓</i></div></section>
 
-export default function Home() {
-  return (
-    <main>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantSchema) }} />
-      <header className="site-header">
-        <a className="brand" href="#top" aria-label="Yaz Restaurant home"><span>Y</span>AZ</a>
-        <nav aria-label="Main navigation">
-          <a href="#story">Our story</a><a href="#menu">Menu</a><a href="#private-hire">Private hire</a><a href="#visit">Visit</a>
-        </nav>
-        <a className="header-book" href={bookingUrl}>Book a table</a>
-      </header>
+  <section className="yaz-ribbon" aria-label="Restaurant highlights"><div><span>Turkish roots</span><i>◆</i><span>Mediterranean rhythm</span><i>◆</i><span>London nights</span><i>◆</i><span>Seven days a week</span><i>◆</i><span aria-hidden="true">Turkish roots</span><i aria-hidden="true">◆</i><span aria-hidden="true">Mediterranean rhythm</span><i aria-hidden="true">◆</i></div></section>
+  <OpenTableBooking/>
 
-      <section className="hero" id="top">
-        <div className="hero-copy">
-          <p className="eyebrow">Highams Park · London</p>
-          <h1>Mediterranean soul.<br/><em>London energy.</em></h1>
-          <p className="intro">Modern Turkish and Mediterranean dining, made for long lunches, candlelit dinners and celebrations that deserve something special.</p>
-          <div className="hero-actions">
-            <a className="button button-gold pulse-button" href={bookingUrl}>Book a table</a>
-            <a className="button button-quiet" href="#menu">Explore the menu <span aria-hidden="true">→</span></a>
-          </div>
-          <div className="opening-note"><span>Open every day</span><span>Sun–Thu 10:30–23:00</span><span>Fri–Sat 10:30–00:00</span></div>
-        </div>
-        <div className="hero-image" role="img" aria-label="Warm, elegant dining room at Yaz Restaurant">
-          <div className="image-stamp"><small>Your escape to the</small><strong>Mediterranean</strong></div>
-        </div>
-      </section>
+  <section className="yaz-manifesto" id="story"><p className="yaz-section-index">01 — The Yaz feeling</p><div><h2>Come for dinner.<br/><em>Stay for the night.</em></h2><p>Yaz is the kind of place where one plate becomes five, lunch slips into cocktails and every guest is welcomed like part of the family. Our kitchen draws from Anatolia and the Mediterranean, then lets London add the energy.</p><a href="#visit">Meet us in Highams Park <span>↗</span></a></div></section>
 
-      <section className="marquee" aria-label="Yaz restaurant highlights"><div><span>Turkish flavours</span><i>•</i><span>Modern hospitality</span><i>•</i><span>Made to share</span><i>•</i><span>Highams Park</span><i>•</i><span>Turkish flavours</span><i>•</i><span>Modern hospitality</span><i>•</i><span>Made to share</span><i>•</i><span>Highams Park</span></div></section>
+  <section className="yaz-duet"><figure className="yaz-arch"><img src={foodImage} alt="Colourful Mediterranean food prepared at Yaz Restaurant" width="1600" height="1600" loading="lazy"/><video autoPlay muted loop playsInline preload="metadata" poster={foodImage} aria-hidden="true"><source src="/yaz-duet.mp4" type="video/mp4"/></video><figcaption>Made with heart<br/>Served with generosity</figcaption></figure><div className="yaz-duet-copy"><p className="yaz-section-index">02 — From our kitchen</p><blockquote>“Food should arrive with colour, warmth and a reason to pass the plate.”</blockquote><p>Charcoal-fired meats, bright meze, market seafood and desserts worth saving room for. Familiar flavours are treated with care, not complication.</p><a className="yaz-pill" href="/menu">Discover our menus</a></div></section>
 
-      <OpenTableBooking />
+  <section className="yaz-menu-preview" id="menu"><header><p className="yaz-section-index">03 — A taste of Yaz</p><h2>Choose your mood.</h2><p>From a long breakfast to a late dinner, every menu is designed around the table.</p></header><div className="yaz-menu-grid">{menu.map((item,index)=><article key={item.name}><span>0{index+1}</span><div><h3>{item.name}</h3><p>{item.detail}</p>{item.price&&<strong>{item.price}</strong>}</div><a href="/menu" aria-label={`View menu featuring ${item.name}`}>↗</a></article>)}</div><a className="yaz-outline-link" href="/menu">View every menu</a></section>
 
-      <section className="story section" id="story">
-        <div><p className="eyebrow dark">Family-run · Generously served</p><h2>A little piece of the Mediterranean, right here in London.</h2></div>
-        <div className="story-copy"><p>From sunrise to starlight, Yaz brings together the flavours of Anatolia and the Mediterranean with the easy warmth of a family table.</p><p>Join us downstairs for relaxed breakfast and brunch, or head upstairs for supper, cocktails and a night to remember.</p><a className="text-link" href="#visit">Discover Yaz <span>→</span></a></div>
-      </section>
+  <section className="yaz-occasions"><div className="yaz-occasions-image"><img src={heroImage} alt="Elegant private dining setting at Yaz" width="1800" height="1800" loading="lazy"/></div><div className="yaz-occasions-copy"><p className="yaz-section-index">04 — Gather differently</p><h2>Make the room<br/><em>yours.</em></h2><p>Birthdays, engagements, work dinners and celebrations for up to 200 guests, with bespoke menus, a cocktail bar and a heated balcony.</p><ul><li>Private dining</li><li>Dedicated event team</li><li>Bespoke menus</li><li>Up to 200 guests</li></ul><a className="yaz-pill light" href="/private-hire">Plan your occasion</a></div></section>
 
-      <section className="experience-grid" aria-label="The Yaz experience">
-        <div className="portrait-image" role="img" aria-label="Fresh Mediterranean food at Yaz Restaurant" />
-        <article className="experience-card"><p className="eyebrow">Fresh from the kitchen</p><h2>Authentic flavours.<br/>Made with heart.</h2><p>Charcoal grills, colourful meze, market-fresh seafood and indulgent desserts—each plate carries a familiar taste with a modern Yaz signature.</p><a className="button button-outline" href="#menu">View our favourites</a></article>
-      </section>
+  {events.length>0&&<section className="yaz-events"><p className="yaz-section-index">What’s on</p><div>{events.map(event=><article key={event.title}><span>{event.date}</span><h3>{event.title}</h3><p>{event.detail}</p><a href="#book">Reserve a table ↗</a></article>)}</div></section>}
+  <CrmLeadForm/>
 
-      <section className="menu-section section" id="menu">
-        <div className="section-heading"><div><p className="eyebrow dark">A taste of Yaz</p><h2>Come hungry.<br/><em>Leave happy.</em></h2></div><p>Our menus move from laid-back brunch to generous evening feasts, with vegetarian choices and halal dishes throughout.</p></div>
-        <div className="menu-list">{menuHighlights.map((item, index) => <article key={item.name}><span>0{index + 1}</span><div><h3>{item.name}</h3><p>{item.detail}</p></div></article>)}</div>
-        <a className="button button-dark" href="https://www.yazrestaurant.co.uk/menu" target="_blank" rel="noreferrer">View full menus</a>
-      </section>
+  <section className="yaz-visit" id="visit"><div className="yaz-visit-lead"><p className="yaz-section-index">05 — Find your way</p><h2>Meet you<br/>at Yaz.</h2><a href="https://maps.google.com/?q=Yaz+Restaurant+Highams+Park" target="_blank" rel="noreferrer">Open in Maps ↗</a></div><div className="yaz-visit-details"><article><span>Address</span><p>7–9 Signal Walk<br/>Highams Park<br/>London E4 9BW</p></article><article><span>Hours</span><p>Sun–Thu<br/>10:30–23:00</p><p>Fri–Sat<br/>10:30–00:00</p></article><article><span>Contact</span><a href="tel:+442082799239">020 8279 9239</a><a href="mailto:contact@yazrestaurant.co.uk">contact@yazrestaurant.co.uk</a></article></div></section>
 
-      <section className="private-hire" id="private-hire">
-        <div className="private-copy"><p className="eyebrow">Gather at Yaz</p><h2>Your occasion,<br/><em>beautifully hosted.</em></h2><p>Birthdays, engagements, work dinners and celebrations for up to 200 guests. Our upstairs space, cocktail bar and heated balcony are yours to make memorable.</p><a className="button button-gold" href="mailto:contact@yazrestaurant.co.uk?subject=Private%20hire%20enquiry">Plan your event</a></div>
-        <div className="private-detail"><span>Private dining</span><span>Up to 200 guests</span><span>Bespoke menus</span><span>Dedicated team</span></div>
-      </section>
-
-      <section className="visit section" id="visit">
-        <div><p className="eyebrow dark">Come and see us</p><h2>Meet you at Yaz.</h2><p className="address">7–9 Signal Walk<br/>Highams Park, London E4 9BW</p><a className="text-link" href="https://maps.google.com/?q=Yaz+Restaurant+Highams+Park" target="_blank" rel="noreferrer">Get directions <span>↗</span></a></div>
-        <div className="visit-info"><div><h3>Opening hours</h3><p>Sunday–Thursday<br/>10:30–23:00</p><p>Friday–Saturday<br/>10:30–00:00</p></div><div><h3>Contact</h3><a href="tel:+442082799239">020 8279 9239</a><a href="mailto:contact@yazrestaurant.co.uk">contact@yazrestaurant.co.uk</a></div></div>
-      </section>
-
-      <footer><a className="brand footer-brand" href="#top"><span>Y</span>AZ</a><p>Turkish &amp; Mediterranean dining in Highams Park.</p><div><a href="https://www.instagram.com/yazrestaurant/">Instagram</a><a href="https://www.tiktok.com/@yazrestaurant_uk">TikTok</a><a href="https://www.tripadvisor.co.uk/Restaurant_Review-g10283565-d15636700-Reviews-Yaz_Restaurant-Chingford_Waltham_Forest_Greater_London_England.html">Tripadvisor</a></div><small>© {new Date().getFullYear()} Yaz Restaurant</small></footer>
-      <a className="mobile-book" href={bookingUrl}>Book a table</a>
-    </main>
-  );
+  <footer className="yaz-footer"><a className="yaz-wordmark footer" href="#top"><span>Y</span>AZ</a><p>Turkish roots. Mediterranean rhythm. London energy.</p><nav><a href="/menu">Menus</a><a href="/private-hire">Private hire</a><a href="/privacy">Privacy</a><a href="/admin">Admin</a></nav><div><a href="https://www.instagram.com/yazrestaurant/">Instagram</a><a href="https://www.tiktok.com/@yazrestaurant_uk">TikTok</a><small>© {new Date().getFullYear()} Yaz Restaurant</small></div></footer>
+  <MobileBookingButton/>
+ </main>;
 }
