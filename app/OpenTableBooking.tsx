@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { NorthEastArrow } from "./NorthEastArrow";
 
 export function OpenTableBooking() {
   const [date, setDate] = useState("");
@@ -21,7 +22,7 @@ export function OpenTableBooking() {
         <label><span>Date</span><input required type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>
         <label><span>Time</span><select value={time} onChange={(e) => setTime(e.target.value)}>{["10:30","12:00","13:30","15:00","17:00","18:30","19:00","19:30","20:00","20:30","21:00","22:00"].map((slot) => <option key={slot}>{slot}</option>)}</select></label>
         <label><span>Guests</span><select value={party} onChange={(e) => setParty(e.target.value)}>{Array.from({ length: 12 }, (_, i) => i + 1).map((count) => <option key={count} value={count}>{count} {count === 1 ? "guest" : "guests"}</option>)}</select></label>
-        <button type="submit">Find a table <span aria-hidden="true">↗</span></button>
+        <button type="submit">Find a table <NorthEastArrow /></button>
       </form>
       <p className="powered">Reservations powered by <strong>OpenTable</strong></p>
     </section>
