@@ -1,13 +1,7 @@
-import { env } from "cloudflare:workers";
 import { drizzle } from "drizzle-orm/d1";
-import * as schema from "./schema";
 
-export function getDb() {
-  if (!env.DB) {
-    throw new Error(
-      "Cloudflare D1 binding `DB` is unavailable. Set the `d1` field in .openai/hosting.json to `DB` or let your control plane inject the real binding values before using the database."
-    );
-  }
-
-  return drizzle(env.DB, { schema });
+// Database-backed features are intentionally unavailable in the Vercel demo.
+// The production edition will use a Vercel-compatible managed database.
+export function getDb(): ReturnType<typeof drizzle> {
+  throw new Error("Database features are disabled in the Vercel demonstration");
 }
