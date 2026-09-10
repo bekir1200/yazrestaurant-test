@@ -1,2 +1,3 @@
-export const metadata={title:"Admin unavailable | Yaz demo",robots:{index:false,follow:false,nocache:true}};
-export default function AdminPage(){return <main className="privacy-page"><a className="brand" href="/"><span>Y</span>AZ</a><p className="eyebrow">Demonstration mode</p><h1>Admin is not enabled.</h1><section><p>This public Vercel preview does not connect to the private CRM or restaurant database.</p></section><a className="button button-dark" href="/">Return to restaurant site</a></main>}
+import { MediaManager } from "./MediaManager";
+export const metadata={title:"Media management | Yaz",robots:{index:false,follow:false,nocache:true}};
+export default function AdminPage(){return <MediaManager/>}
