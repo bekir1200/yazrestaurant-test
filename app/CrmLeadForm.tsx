@@ -11,7 +11,7 @@ export function CrmLeadForm() {
     const form = new FormData(event.currentTarget);
     const payload = Object.fromEntries(form.entries());
     const response = await fetch("/api/crm/leads", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
-    if (response.ok) { event.currentTarget.reset(); setState("done"); } else setState("error");
+    if (response.ok) { window.yazTrack?.("generate_lead",{event_type:String(payload.eventType||"private_hire")}); event.currentTarget.reset(); setState("done"); } else setState("error");
   }
 
   return (

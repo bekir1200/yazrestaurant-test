@@ -44,3 +44,5 @@ next-env.d.ts
 /.dev-output.log
 /.dev-error.log
 /video/
+/.data/
+/public/uploads/

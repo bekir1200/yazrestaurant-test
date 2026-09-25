@@ -1,11 +1,10 @@
-import { asc } from "drizzle-orm";
-import { getDb } from "../db";
-import { siteRecords } from "../db/schema";
+import { decryptIntegrationSecret, readAdminStore } from "../lib/local-admin-store";
 import { CrmLeadForm } from "./CrmLeadForm";
 import { OpenTableBooking } from "./OpenTableBooking";
 import { MobileBookingButton } from "./MobileBookingButton";
 import { NorthEastArrow } from "./NorthEastArrow";
 import { getMediaSettings } from "../lib/media";
+import { GoogleMap } from "./GoogleMap";
 
 const heroImage="https://static.wixstatic.com/media/16ca1a_b5c3a872574b4054af44f6fab16435a8f000.jpg/v1/fill/w_1800,h_1800,al_c,q_90,enc_avif,quality_auto/16ca1a_b5c3a872574b4054af44f6fab16435a8f000.jpg";
 const foodImage="https://static.wixstatic.com/media/16ca1a_a7a5fe1e979f40efb026481393cddd56f000.jpg/v1/fill/w_1600,h_1600,al_c,q_90,enc_avif,quality_auto/16ca1a_a7a5fe1e979f40efb026481393cddd56f000.jpg";
@@ -16,15 +15,17 @@ export const dynamic="force-dynamic";
 export default async function Home(){
  const media=await getMediaSettings();
  let menu=fallbackMenu,events:{title:string;date:string;detail:string}[]=[];let headline="A table full of stories.";let intro="Contemporary Turkish and Mediterranean cooking, generous hospitality and evenings that move at their own pace.";
- if(!process.env.VERCEL){try{const rows=await getDb().select().from(siteRecords).orderBy(asc(siteRecords.position));const live=rows.filter(r=>r.type==="menu"&&r.active).map(r=>({name:r.title,detail:r.body,price:r.subtitle}));if(live.length)menu=live.slice(0,3);events=rows.filter(r=>r.type==="event"&&r.active).map(r=>({title:r.title,date:r.subtitle,detail:r.body}));const hero=rows.find(r=>r.type==="content"&&r.title==="homepage.hero"&&r.active);if(hero?.subtitle)headline=hero.subtitle;if(hero?.body)intro=hero.body;}catch{}}
+ let footerTagline="Turkish roots. Mediterranean rhythm. London energy.",instagram="https://www.instagram.com/yazrestaurant/",tiktok="https://www.tiktok.com/@yazrestaurant_uk",openTableRef="193299",googleMapsKey="";
+ try{const store=await readAdminStore();const rows=store.records.sort((a,b)=>a.position-b.position);const live=rows.filter(r=>r.type==="menu"&&r.active).map(r=>({name:r.title,detail:r.body,price:r.subtitle}));if(live.length)menu=live.slice(0,3);events=rows.filter(r=>r.type==="event"&&r.active).map(r=>({title:r.title,date:r.subtitle,detail:r.body}));const hero=rows.find(r=>r.type==="content"&&r.title==="homepage.hero"&&r.active);if(hero?.subtitle)headline=hero.subtitle;if(hero?.body)intro=hero.body;for(const item of rows.filter(r=>r.type==="footer"&&r.active)){if(item.title==="tagline")footerTagline=item.subtitle;if(item.title==="instagram")instagram=item.subtitle;if(item.title==="tiktok")tiktok=item.subtitle}const openTable=store.integrations.find(item=>item.provider==="opentable"&&item.enabled);if(openTable)openTableRef=decryptIntegrationSecret(openTable.secretEncrypted)||openTableRef;const maps=store.integrations.find(item=>item.provider==="google-maps"&&item.enabled);if(maps)googleMapsKey=decryptIntegrationSecret(maps.secretEncrypted)}catch{}
+ const Logo=({footer=false}:{footer?:boolean})=>media.logoImage?<img className={footer?"yaz-logo-img footer-logo":"yaz-logo-img"} src={media.logoImage} alt="Yaz Restaurant"/>:<><span>Y</span>AZ{!footer&&<small>HIGHAMS PARK</small>}</>;
  return <main className="yaz-home">
   <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(restaurantSchema)}}/>
-  <header className="yaz-nav"><a className="yaz-wordmark" href="#top" aria-label="Yaz Restaurant home"><span>Y</span>AZ<small>HIGHAMS PARK</small></a><nav aria-label="Main navigation"><a href="#story">Story</a><a href="/menu">Menus</a><a href="/private-hire">Private hire</a><a href="#visit">Find us</a></nav><a className="yaz-nav-book" href="#book">Reserve</a></header>
+  <header className="yaz-nav"><a className="yaz-wordmark" href="#top" aria-label="Yaz Restaurant home"><Logo/></a><nav aria-label="Main navigation"><a href="#story">Story</a><a href="/menu">Menus</a><a href="/private-hire">Private hire</a><a href="#visit">Find us</a></nav><a className="yaz-nav-book" href="#book">Reserve</a></header>
 
   <section className="yaz-hero" id="top"><div className="yaz-hero-media"><img src={media.heroImage} alt="Atmospheric dining room at Yaz Restaurant in Highams Park" width="1800" height="1800" fetchPriority="high"/><video autoPlay muted loop playsInline preload="metadata" poster={media.heroImage} aria-hidden="true"><source src={media.heroVideo}/></video><div className="yaz-hero-wash"/></div><div className="yaz-hero-copy"><p className="yaz-kicker"><span>Highams Park</span><span>London E4</span></p><h1>{headline}</h1><p>{intro}</p><div className="yaz-hero-actions"><a href="#book">Book your table</a><a href="/menu">Explore the menu</a></div></div><div className="yaz-scroll">Scroll to discover <i>↓</i></div></section>
 
   <section className="yaz-ribbon" aria-label="Restaurant highlights"><div><span>Turkish roots</span><i>◆</i><span>Mediterranean rhythm</span><i>◆</i><span>London nights</span><i>◆</i><span>Seven days a week</span><i>◆</i><span aria-hidden="true">Turkish roots</span><i aria-hidden="true">◆</i><span aria-hidden="true">Mediterranean rhythm</span><i aria-hidden="true">◆</i></div></section>
-  <OpenTableBooking/>
+  <OpenTableBooking restRef={openTableRef}/>
 
   <section className="yaz-manifesto" id="story"><p className="yaz-section-index">01 — The Yaz feeling</p><div><h2>Come for dinner.<br/><em>Stay for the night.</em></h2><p>Yaz is the kind of place where one plate becomes five, lunch slips into cocktails and every guest is welcomed like part of the family. Our kitchen draws from Anatolia and the Mediterranean, then lets London add the energy.</p><a href="#visit">Meet us in Highams Park <NorthEastArrow /></a></div></section>
 
@@ -37,9 +38,9 @@ export default async function Home(){
   {events.length>0&&<section className="yaz-events"><p className="yaz-section-index">What’s on</p><div>{events.map(event=><article key={event.title}><span>{event.date}</span><h3>{event.title}</h3><p>{event.detail}</p><a href="#book">Reserve a table <NorthEastArrow /></a></article>)}</div></section>}
   {process.env.VERCEL?<section className="demo-enquiry"><p className="yaz-section-index">Private hire enquiries</p><h2>Planning something special?</h2><p>For this demonstration, enquiries open directly in your email application.</p><a className="yaz-pill light" href="mailto:contact@yazrestaurant.co.uk?subject=Private%20hire%20enquiry">Contact the Yaz team</a></section>:<CrmLeadForm/>}
 
-  <section className="yaz-visit" id="visit"><div className="yaz-visit-lead"><p className="yaz-section-index">05 — Find your way</p><h2>Meet you<br/>at Yaz.</h2><a href="https://maps.google.com/?q=Yaz+Restaurant+Highams+Park" target="_blank" rel="noreferrer">Open in Maps <NorthEastArrow /></a></div><div className="yaz-visit-details"><article><span>Address</span><p>7–9 Signal Walk<br/>Highams Park<br/>London E4 9BW</p></article><article><span>Hours</span><p>Sun–Thu<br/>10:30–23:00</p><p>Fri–Sat<br/>10:30–00:00</p></article><article><span>Contact</span><a href="tel:+442082799239">020 8279 9239</a><a href="mailto:contact@yazrestaurant.co.uk">contact@yazrestaurant.co.uk</a></article></div></section>
+  <section className="yaz-visit" id="visit"><div className="yaz-visit-lead"><p className="yaz-section-index">05 — Find your way</p><h2>Meet you<br/>at Yaz.</h2><a href="https://maps.google.com/?q=Yaz+Restaurant+Highams+Park" target="_blank" rel="noreferrer">Open in Maps <NorthEastArrow /></a><GoogleMap apiKey={googleMapsKey}/></div><div className="yaz-visit-details"><article><span>Address</span><p>7–9 Signal Walk<br/>Highams Park<br/>London E4 9BW</p></article><article><span>Hours</span><p>Sun–Thu<br/>10:30–23:00</p><p>Fri–Sat<br/>10:30–00:00</p></article><article><span>Contact</span><a href="tel:+442082799239">020 8279 9239</a><a href="mailto:contact@yazrestaurant.co.uk">contact@yazrestaurant.co.uk</a></article></div></section>
 
-  <footer className="yaz-footer"><a className="yaz-wordmark footer" href="#top"><span>Y</span>AZ</a><p>Turkish roots. Mediterranean rhythm. London energy.</p><nav><a href="/menu">Menus</a><a href="/private-hire">Private hire</a><a href="/privacy">Privacy</a><a href="/admin">Admin</a></nav><div><a href="https://www.instagram.com/yazrestaurant/">Instagram</a><a href="https://www.tiktok.com/@yazrestaurant_uk">TikTok</a><small>© {new Date().getFullYear()} Yaz Restaurant</small></div></footer>
+  <footer className="yaz-footer"><div className="yaz-footer-brand"><a className="yaz-wordmark footer" href="#top"><Logo footer/></a><p>{footerTagline}</p></div><nav aria-label="Footer navigation"><strong>Explore</strong><a href="/menu">Menus</a><a href="/private-hire">Private hire</a><a href="/#visit">Find us</a></nav><div className="yaz-footer-contact"><strong>Connect</strong><a href={instagram}>Instagram</a><a href={tiktok}>TikTok</a><a href="mailto:contact@yazrestaurant.co.uk">Email us</a></div><div className="yaz-footer-bottom"><span>7–9 Signal Walk, Highams Park, London E4 9BW</span><a href="/privacy">Privacy</a><small>© {new Date().getFullYear()} Yaz Restaurant</small></div></footer>
   <MobileBookingButton/>
  </main>;
 }

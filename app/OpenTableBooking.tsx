@@ -3,15 +3,16 @@
 import { FormEvent, useState } from "react";
 import { NorthEastArrow } from "./NorthEastArrow";
 
-export function OpenTableBooking() {
+export function OpenTableBooking({restRef="193299"}:{restRef?:string}) {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("19:00");
   const [party, setParty] = useState("2");
 
   function reserve(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const params = new URLSearchParams({ lang: "en-GB", restRef: "193299", otSource: "Restaurant website", partySize: party });
+    const params = new URLSearchParams({ lang: "en-GB", restRef, otSource: "Restaurant website", partySize: party });
     if (date) params.set("dateTime", `${date}T${time}`);
+    window.yazTrack?.("booking_start",{party_size:Number(party)});
     window.open(`https://www.opentable.co.uk/booking/restref/availability?${params.toString()}`, "_blank", "noopener,noreferrer");
   }
 
