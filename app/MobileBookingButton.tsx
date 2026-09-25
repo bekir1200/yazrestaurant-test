@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { BookingLink } from "./BookingLink";
 
-export function MobileBookingButton(){
+export function MobileBookingButton({restRef="193299"}:{restRef?:string}){
   const [visible,setVisible]=useState(false);
   useEffect(()=>{
     let frame=0;
@@ -12,5 +13,5 @@ export function MobileBookingButton(){
     window.addEventListener("resize",update);
     return()=>{cancelAnimationFrame(frame);window.removeEventListener("scroll",update);window.removeEventListener("resize",update);};
   },[]);
-  return <a className={`yaz-mobile-book${visible?" is-visible":""}`} href="#book" aria-hidden={!visible} tabIndex={visible?0:-1}>Reserve a table</a>;
+  return <BookingLink restRef={restRef} className={`yaz-mobile-book${visible?" is-visible":""}`} ariaHidden={!visible} tabIndex={visible?0:-1}>Reserve a table</BookingLink>;
 }
