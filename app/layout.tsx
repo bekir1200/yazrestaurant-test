@@ -9,6 +9,7 @@ const sans = DM_Sans({ variable: "--font-sans", subsets: ["latin"], weight: ["40
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.yazrestaurant.co.uk"),
+  icons: { icon: "/favicon.ico", apple: "/icon.png" },
   title: "Turkish Restaurant in Highams Park, London | Yaz",
   description: "Discover modern Turkish and Mediterranean dining at Yaz Restaurant in Highams Park. Breakfast, dinner, cocktails, private hire and reservations.",
   alternates: { canonical: "/" },
