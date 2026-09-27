@@ -17,8 +17,8 @@ export function OpenTableBooking({restRef="193299"}:{restRef?:string}) {
   }
 
   return (
-    <section className="booking-panel" id="book" aria-labelledby="booking-title">
-      <div className="booking-intro"><p className="eyebrow">Reserve your table</p><h2 id="booking-title">Your table is waiting.</h2><p>Choose your details here and continue securely with OpenTable.</p></div>
+    <section className="booking-panel editorial-booking-panel" id="book" aria-labelledby="booking-title">
+      <div className="booking-intro"><p className="eyebrow">Reserve your table</p><h2 id="booking-title">Book a table</h2></div>
       <form onSubmit={reserve} className="booking-form">
         <label><span>Date</span><input required type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>
         <label><span>Time</span><select value={time} onChange={(e) => setTime(e.target.value)}>{["10:30","12:00","13:30","15:00","17:00","18:30","19:00","19:30","20:00","20:30","21:00","22:00"].map((slot) => <option key={slot}>{slot}</option>)}</select></label>

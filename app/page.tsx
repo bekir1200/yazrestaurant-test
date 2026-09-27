@@ -1,8 +1,8 @@
 import { decryptIntegrationSecret, readAdminStore } from "../lib/local-admin-store";
-import { BookingLink } from "./BookingLink";
 import { CrmLeadForm } from "./CrmLeadForm";
 import { MobileBookingButton } from "./MobileBookingButton";
 import { EditorialHeader } from "./EditorialHeader";
+import { OpenTableBooking } from "./OpenTableBooking";
 import { NorthEastArrow } from "./NorthEastArrow";
 import { getMediaSettings } from "../lib/media";
 import { GoogleMap } from "./GoogleMap";
@@ -51,8 +51,8 @@ export default async function Home() {
   } catch { }
 
   const menuCards = [
-    { title: menu[0]?.name || "From our kitchen", detail: menu[0]?.detail || "Bright flavours, generous plates.", image: "/yaz-gallery-table.jpeg", href: "/menu" },
-    { title: menu[1]?.name || "Cocktails at Yaz", detail: menu[1]?.detail || "A little something for the evening.", image: "/yaz-gallery-cocktails.jpeg", href: "/menu" },
+    { title: "Dine with us", detail: "Come together over generous Turkish favourites, made to share and savour.", image: "/yaz-gallery-table.jpeg", href: "/menu" },
+    { title: "Cocktails at Yaz", detail: "Raise a glass to signature cocktails, timeless classics and evenings that linger.", image: "/yaz-gallery-cocktails.jpeg", href: "/menu" },
     { title: "The Yaz setting", detail: "A warm welcome, from the first moment.", image: "/yaz-gallery-room.jpeg", href: "#visit" },
     { title: "Private dining", detail: "Bring everyone together around one table.", image: "/yaz-gallery-private-dining.jpeg", href: "/private-hire" },
   ];
@@ -84,7 +84,8 @@ export default async function Home() {
     <section className="editorial-welcome" id="welcome">
       <h1>Welcome to Yaz, a contemporary celebration of the flavours we <em>know and love.</em></h1>
       <p>{intro}</p>
-      <div className="editorial-actions"><a href="/private-hire">Discover Yaz</a><BookingLink restRef={openTableRef}>Book now</BookingLink></div>
+      <div className="editorial-actions"><a href="/private-hire">Discover Yaz</a></div>
+      <OpenTableBooking restRef={openTableRef} />
     </section>
 
     <section className="editorial-menu" id="menu">
