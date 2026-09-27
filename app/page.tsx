@@ -88,6 +88,12 @@ export default async function Home() {
       <OpenTableBooking restRef={openTableRef} />
     </section>
 
+    <section className="editorial-fire-video" aria-label="Yaz by the fire">
+      <video autoPlay muted loop playsInline preload="metadata" poster="/yaz-gallery-room.jpeg" aria-hidden="true">
+        <source src="/yaz-duet.mp4" type="video/mp4" />
+      </video>
+    </section>
+
     <section className="editorial-menu" id="menu">
       <header><p className="editorial-eyebrow">A taste of Yaz</p><h2>The menus—<br /><em>Turkish soul, London spirit.</em></h2></header>
       <div className="editorial-menu-cards">{menuCards.map((card, index) => <article key={card.title}>
