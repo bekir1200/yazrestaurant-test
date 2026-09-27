@@ -2,20 +2,28 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { decryptIntegrationSecret, readAdminStore } from "../lib/local-admin-store";
+import { getSeoSettings } from "../lib/seo-settings";
 import { IntegrationRuntime } from "./IntegrationRuntime";
 
 const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], weight: ["400", "500", "600"] });
 const sans = DM_Sans({ variable: "--font-sans", subsets: ["latin"], weight: ["400", "500", "600"] });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://www.yazrestaurant.co.uk"),
-  icons: { icon: "/favicon.ico", apple: "/icon.png" },
-  title: "Turkish Restaurant in Highams Park, London | Yaz",
-  description: "Discover modern Turkish and Mediterranean dining at Yaz Restaurant in Highams Park. Breakfast, dinner, cocktails, private hire and reservations.",
-  alternates: { canonical: "/" },
-  openGraph: { title: "Yaz Restaurant | Mediterranean soul. London energy.", description: "Modern Turkish and Mediterranean dining in Highams Park, London.", type: "website", locale: "en_GB", url: "/", images: [{ url: "/og.png", width: 1734, height: 909, alt: "Yaz Restaurant — Mediterranean soul. London energy." }] },
-  twitter: { card: "summary_large_image", title: "Yaz Restaurant, Highams Park", description: "Modern Turkish and Mediterranean dining in London.", images: ["/og.png"] },
-};
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoSettings();
+  const creator = seo.twitterHandle ? (seo.twitterHandle.startsWith("@") ? seo.twitterHandle : `@${seo.twitterHandle}`) : undefined;
+  return {
+    metadataBase: new URL(seo.siteUrl),
+    icons: { icon: "/favicon.ico", apple: "/icon.png" },
+    title: seo.defaultTitle,
+    description: seo.defaultDescription,
+    alternates: { canonical: "/" },
+    robots: { index: seo.indexable, follow: seo.indexable },
+    openGraph: { title: seo.defaultTitle, description: seo.defaultDescription, type: "website", locale: "en_GB", siteName: seo.siteName, url: "/", images: [{ url: seo.socialImage, alt: seo.siteName }] },
+    twitter: { card: "summary_large_image", title: seo.defaultTitle, description: seo.defaultDescription, ...(creator ? { creator } : {}), images: [seo.socialImage] },
+  };
+}
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const config:{ga4?:string;googleAds?:string;gtm?:string;metaPixel?:string;mapsKey?:string}={};

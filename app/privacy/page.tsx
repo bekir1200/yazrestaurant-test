@@ -1,9 +1,13 @@
-import type { Metadata } from "next";
 import { getMediaSettings } from "../../lib/media";
+import { getSeoSettings, pageSeoMetadata } from "../../lib/seo-settings";
 import { EditorialHeader } from "../EditorialHeader";
 import { EditorialFooter } from "../EditorialFooter";
 
-export const metadata: Metadata = { title: "Privacy Notice | Yaz Restaurant", alternates: { canonical: "/privacy" } };
+export async function generateMetadata() {
+  return pageSeoMetadata(await getSeoSettings(), "privacy", "/privacy");
+}
+
+export const dynamic = "force-dynamic";
 const sections = [
   { title: "Who we are", text: "Yaz Restaurant is the data controller for enquiries submitted on this website. Contact: contact@yazrestaurant.co.uk, 7–9 Signal Walk, Highams Park, London E4 9BW." },
   { title: "What we collect and why", text: "For event enquiries we collect your name, email, optional phone number, event details and preferred date so we can respond, prepare a quote and manage the requested service. Our lawful basis is taking steps at your request before entering a contract and, where relevant, performance of a contract." },

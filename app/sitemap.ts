@@ -1,7 +1,10 @@
 import type { MetadataRoute } from "next";
+import { getSeoSettings } from "../lib/seo-settings";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://www.yazrestaurant.co.uk";
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const base = (await getSeoSettings()).siteUrl.replace(/\/$/, "");
   return [
     { url: `${base}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${base}/menu`, changeFrequency: "weekly", priority: .9 },

@@ -1,12 +1,15 @@
-import type { Metadata } from "next";
 import { readAdminStore } from "../../lib/local-admin-store";
 import { getMediaSettings } from "../../lib/media";
 import { menuDietaryNote, menuSections } from "../../lib/menu-data";
+import { getSeoSettings, pageSeoMetadata } from "../../lib/seo-settings";
 import { EditorialHeader } from "../EditorialHeader";
 import { EditorialFooter } from "../EditorialFooter";
 
-export const metadata: Metadata = { title: "Turkish & Mediterranean Menu in Highams Park | Yaz", description: "Explore charcoal grills, colourful meze, seafood and vegetarian dishes at Yaz Restaurant in Highams Park, London.", alternates: { canonical: "/menu" }, openGraph: { title: "Yaz Restaurant Menu | Highams Park", description: "Turkish and Mediterranean dishes made for sharing, from relaxed brunch to dinner.", url: "/menu" } };
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  return pageSeoMetadata(await getSeoSettings(), "menu", "/menu");
+}
 
 const normaliseName = (value: string) => value.trim().toLocaleLowerCase("en-GB");
 
@@ -36,6 +39,10 @@ export default async function MenuPage() {
   return <main className="editorial-subpage editorial-menu-page">
     <EditorialHeader logoImage={logoImage} openTableRef="193299" subpage />
     <section className="editorial-subpage-hero editorial-menu-hero">
+      <video className="editorial-menu-background-video" autoPlay muted loop playsInline preload="metadata" poster="/yaz-gallery-table.jpeg" aria-hidden="true">
+        <source src="/menuvideo.mp4" type="video/mp4" />
+      </video>
+      <span className="editorial-menu-video-shade" aria-hidden="true" />
       <p className="editorial-eyebrow">Turkish &amp; Mediterranean dining · Highams Park</p>
       <h1>A table full<br /><em>of stories.</em></h1>
       <p>Charcoal-fired favourites, colourful meze and bright Mediterranean flavours—made for the whole table.</p>

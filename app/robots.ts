@@ -1,9 +1,14 @@
 import type { MetadataRoute } from "next";
+import { getSeoSettings } from "../lib/seo-settings";
 
-export default function robots(): MetadataRoute.Robots {
+export const dynamic = "force-dynamic";
+
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const { siteUrl, indexable } = await getSeoSettings();
+  const base = siteUrl.replace(/\/$/, "");
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/admin", "/crm", "/api/"] }],
-    sitemap: "https://www.yazrestaurant.co.uk/sitemap.xml",
-    host: "https://www.yazrestaurant.co.uk",
+    rules: [{ userAgent: "*", ...(indexable ? { allow: "/", disallow: ["/admin", "/crm", "/api/"] } : { disallow: ["/", "/admin", "/crm", "/api/"] }) }],
+    sitemap: `${base}/sitemap.xml`,
+    host: base,
   };
 }

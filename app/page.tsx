@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { decryptIntegrationSecret, readAdminStore } from "../lib/local-admin-store";
+import { getSeoSettings, pageSeoMetadata } from "../lib/seo-settings";
 import { CrmLeadForm } from "./CrmLeadForm";
 import { MobileBookingButton } from "./MobileBookingButton";
 import { EditorialHeader } from "./EditorialHeader";
@@ -17,6 +19,10 @@ const fallbackMenu = [
 const restaurantSchema = { "@context": "https://schema.org", "@type": "Restaurant", name: "Yaz Restaurant", image: [heroImage, foodImage], url: "https://www.yazrestaurant.co.uk/", telephone: "+44 20 8279 9239", priceRange: "££–£££", servesCuisine: ["Turkish", "Mediterranean", "Middle Eastern"], acceptsReservations: true, menu: "https://www.yazrestaurant.co.uk/menu", hasMap: "https://maps.google.com/?q=Yaz+Restaurant+Highams+Park", areaServed: ["Highams Park", "Chingford", "Waltham Forest", "East London"], address: { "@type": "PostalAddress", streetAddress: "7–9 Signal Walk, Highams Park", addressLocality: "London", postalCode: "E4 9BW", addressCountry: "GB" }, openingHoursSpecification: [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Sunday"], opens: "10:30", closes: "23:00" }, { "@type": "OpeningHoursSpecification", dayOfWeek: ["Friday", "Saturday"], opens: "10:30", closes: "00:00" }], sameAs: ["https://www.instagram.com/yazrestaurant/", "https://www.tiktok.com/@yazrestaurant_uk", "https://www.tripadvisor.co.uk/Restaurant_Review-g10283565-d15636700-Reviews-Yaz_Restaurant-Chingford_Waltham_Forest_Greater_London_England.html"] };
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return pageSeoMetadata(await getSeoSettings(), "home", "/");
+}
 
 export default async function Home() {
   const media = await getMediaSettings();

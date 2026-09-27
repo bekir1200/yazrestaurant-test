@@ -1,10 +1,14 @@
-import type { Metadata } from "next";
 import { CrmLeadForm } from "../CrmLeadForm";
 import { EditorialHeader } from "../EditorialHeader";
 import { EditorialFooter } from "../EditorialFooter";
 import { getMediaSettings } from "../../lib/media";
+import { getSeoSettings, pageSeoMetadata } from "../../lib/seo-settings";
 
-export const metadata: Metadata = { title: "Private Hire & Party Venue in Highams Park | Yaz", description: "Host birthdays, engagements and work dinners for up to 200 guests at Yaz Restaurant, Highams Park. Bespoke menus, cocktail bar and heated balcony.", alternates: { canonical: "/private-hire" }, openGraph: { title: "Private Hire at Yaz Restaurant", description: "A stylish private party and dining venue in Highams Park for up to 200 guests.", url: "/private-hire" } };
+export async function generateMetadata() {
+  return pageSeoMetadata(await getSeoSettings(), "privateHire", "/private-hire");
+}
+
+export const dynamic = "force-dynamic";
 const faq = [
   { q: "How many guests can Yaz host?", a: "Our flexible upstairs space can host celebrations for up to 200 guests, depending on the style of your event." },
   { q: "Can you create a bespoke menu?", a: "Yes. Our team can help shape a menu around your occasion, group size and dietary needs." },
