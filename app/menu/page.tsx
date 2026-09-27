@@ -39,27 +39,30 @@ export default async function MenuPage() {
   return <main className="editorial-subpage editorial-menu-page">
     <EditorialHeader logoImage={logoImage} openTableRef="193299" subpage />
     <section className="editorial-subpage-hero editorial-menu-hero">
-      <video className="editorial-menu-background-video" autoPlay muted loop playsInline preload="metadata" poster="/yaz-gallery-table.jpeg" aria-hidden="true">
-        <source src="/menuvideo.mp4" type="video/mp4" />
-      </video>
-      <span className="editorial-menu-video-shade" aria-hidden="true" />
       <p className="editorial-eyebrow">Turkish &amp; Mediterranean dining · Highams Park</p>
       <h1>A table full<br /><em>of stories.</em></h1>
       <p>Charcoal-fired favourites, colourful meze and bright Mediterranean flavours—made for the whole table.</p>
       <a className="editorial-subpage-button" href="/#book">Book a table</a>
     </section>
     <section className="editorial-menu-list-section">
-      <header><p className="editorial-eyebrow">A taste of Yaz</p><h2>Made for sharing.<br /><em>Remembered together.</em></h2><p>Our kitchen brings Anatolian recipes and modern Mediterranean cooking to the table. Please tell the team about allergies or dietary requirements before ordering.</p></header>
-      <div className="editorial-menu-catalog">{sections.map((section) => <section className="editorial-menu-category" key={section.title}>
-        <header><h3>{section.title}</h3>{section.note && <p>{section.note}</p>}</header>
-        <div>{section.items.map((item) => <article key={item.name}>
-          <div className="editorial-menu-item-heading"><h4>{item.name}</h4><strong>{item.price}</strong></div>
-          {item.description && <p>{item.description}</p>}
-          {item.dietary?.length ? <span className="editorial-menu-dietary">{item.dietary.join(" · ")}</span> : null}
-        </article>)}</div>
-      </section>)}</div>
-      <p className="editorial-menu-disclaimer">{menuDietaryNote}</p>
-      <a className="editorial-subpage-text-link" href="/#book">Find your table <span aria-hidden="true">↗</span></a>
+      <div className="editorial-menu-video-stage" aria-hidden="true">
+        <video autoPlay muted loop playsInline preload="metadata" poster="/yaz-gallery-table.jpeg">
+          <source src="/menuvideo.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div className="editorial-menu-content">
+        <header><p className="editorial-eyebrow">A taste of Yaz</p><h2>Made for sharing.<br /><em>Remembered together.</em></h2><p>Our kitchen brings Anatolian recipes and modern Mediterranean cooking to the table. Please tell the team about allergies or dietary requirements before ordering.</p></header>
+        <div className="editorial-menu-catalog">{sections.map((section) => <section className="editorial-menu-category" key={section.title}>
+          <header><h3>{section.title}</h3>{section.note && <p>{section.note}</p>}</header>
+          <div>{section.items.map((item) => <article key={item.name}>
+            <div className="editorial-menu-item-heading"><h4>{item.name}</h4><strong>{item.price}</strong></div>
+            {item.description && <p>{item.description}</p>}
+            {item.dietary?.length ? <span className="editorial-menu-dietary">{item.dietary.join(" · ")}</span> : null}
+          </article>)}</div>
+        </section>)}</div>
+        <p className="editorial-menu-disclaimer">{menuDietaryNote}</p>
+        <a className="editorial-subpage-text-link" href="/#book">Find your table <span aria-hidden="true">↗</span></a>
+      </div>
     </section>
     <section className="editorial-subpage-cta"><p className="editorial-eyebrow">Your table is waiting</p><h2>Join us at Yaz.</h2><p>Good food, warm hospitality and an evening at your own pace.</p><a className="editorial-subpage-button light" href="/#book">Reserve with OpenTable</a></section>
     <EditorialFooter logoImage={logoImage} />
