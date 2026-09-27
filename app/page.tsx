@@ -53,7 +53,7 @@ export default async function Home() {
   const menuCards = [
     { title: "Dine with us", detail: "Come together over generous Turkish favourites, made to share and savour.", image: "/yaz-gallery-table.jpeg", href: "/menu" },
     { title: "Cocktails at Yaz", detail: "Raise a glass to signature cocktails, timeless classics and evenings that linger.", image: "/yaz-gallery-cocktails.jpeg", href: "/menu" },
-    { title: "The Yaz setting", detail: "A warm welcome, from the first moment.", image: "/yaz-gallery-room.jpeg", href: "#visit" },
+    { title: "The Yaz setting", detail: "A warm welcome, from the first moment.", image: "/yaz-gallery-room.jpeg", href: "/private-hire" },
     { title: "Private dining", detail: "Bring everyone together around one table.", image: "/yaz-gallery-private-dining.jpeg", href: "/private-hire" },
   ];
   const experienceCards = [
